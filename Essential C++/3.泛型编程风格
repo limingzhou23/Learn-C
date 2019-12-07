@@ -1,1 +1,11 @@
+STL主要是两种组件构成一是容器：vector list set map等
+                   二是泛型算法 find(),sort(),replace(),merge(),等
+                   
+                   
+1.指针的算术运算
+标兵指针的设置
+指针的提领操作
 
+2.了解Ttrator（泛型指针）
+
+3。所有容器的共同操作
