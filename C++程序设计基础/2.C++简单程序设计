@@ -1,1 +1,46 @@
 http://www.xuetangx.com/courses/course-v1:TsinghuaX+00740043X_2015_T2+sp/pdfbook/0/
+
+浮点数都是近似存值，不要比较两个浮点数是否相同，只能根据绝对值是否接近。
+
+逗号运算符  a=3*4,a*5 得到a=60
+
+条件运算符优先级低于逻辑运算符
+
+移位操作中注意算数移位和逻辑移位的区别 主要是补0/补符号位
+
+for语句可以解决所有循环问题 
+
+auto类型与decltype类型
+
+
+课后例题：
+输入一个整数n，0 < n <= 10
+
+输出 n 阶实心菱形 ， 占 2*n-1 行    *
+   3阶如右侧所示                  ***
+                                *****
+                                 ***
+                                  *
+思路：双重循环 对每行设置判断条件 找出填入 的和*的位置坐标
+      记录空白数量 可以发现是|Num-i| 即行数和阶数差的绝对值
+      空白的位置是距离两侧边界小于空白数的位置 即 j<=zero 和j>=2*Num-zero
+#include <iostream>
+#include<cmath>
+using namespace std;
+
+int main()
+{
+	int Num;
+	cin >> Num;
+	int _zero = 0;
+	for(int i=1;i<Num*2;i++)
+	{
+		_zero = abs(Num - i);
+		cout << endl;
+		for (int j = 1; j < Num*2; j++)
+		{
+			if ((j<=_zero)||(j>=Num*2-_zero)) {cout << " ";}
+			else {cout << "*";}
+		}
+	}
+}
