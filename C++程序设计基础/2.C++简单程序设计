@@ -44,3 +44,156 @@ int main()
 		}
 	}
 }
+
+
+选做题2 输入两个整数与一种运算符号，计算结果；
+运算符号共5种，+,-,*,/,%
+整数范围为int型，保证运算合法。
+
+输入描述  输入两个整数与一种运算符号
+输出描述 计算结果
+
+思路：将运算符号视为字符变量 运用switch语句进行筛选 进行计算
+int main()
+{
+	int a, b;
+	char rule;
+	cin >> a >> b;
+	cin >> rule;
+	int realnum;
+	switch (rule) {
+	case '+':realnum = a + b;
+		break;
+	case '-':realnum = a - b;
+		break;
+	case '*':realnum = a * b;
+		break;
+	case '/':realnum = a / b;
+		break;
+	case '%':realnum = a % b;
+		break;
+	default:realnum = 0;
+		break;
+
+	}
+	cout << realnum << endl;
+	return  0;
+	
+}
+
+选做题6  打印螺旋数字正方形
+输入描述  输入一个整数n，1<=n<=31
+输出描述  输出数字正方形。
+注意，每个数字占4个字符，右对齐，不全则补足空格；
+样例输入
+10
+样例输出
+   1   2   3   4   5   6   7   8   9  10
+  36  37  38  39  40  41  42  43  44  11
+  35  64  65  66  67  68  69  70  45  12
+  34  63  84  85  86  87  88  71  46  13
+  33  62  83  96  97  98  89  72  47  14
+  32  61  82  95 100  99  90  73  48  15
+  31  60  81  94  93  92  91  74  49  16
+  30  59  80  79  78  77  76  75  50  17
+  29  58  57  56  55  54  53  52  51  18
+  28  27  26  25  24  23  22  21  20  19
+  
+思路：输出时补空格使用cout的特性完成 setw()和setfill()函数
+     进行双重循环 对每个(i,j)  先判断外侧有几层 可以去掉内外层 只看当前所在正方形框 
+                              根据i j可以得到在这层旋转中这个元素的坐标 然后计算出外层共有多少个数想加即可
+			      减少运算 可以使用vector来存储不同厚度外层的个数
+
+int num_size(int Num, int i, int j)
+{
+	int realnum = 0;
+	int size = 0;
+	int x_size = i < Num - 1 - i ? i : Num - 1 - i;
+	int y_size = j < Num - 1 - j ? j : Num - 1 - j;
+
+	size = x_size < y_size ? x_size : y_size;
+	return size;
+}
+
+
+int maxnum(int Num, int i, int j)
+{
+	int realnum = 0;
+	int size = 0;
+	int x_size = i < Num - 1 - i ? i : Num - 1 - i;
+	int y_size = j < Num - 1 - j ? j : Num - 1 - j;
+
+	size = x_size < y_size ? x_size : y_size;
+
+	int x_index = i - size;
+	int y_index = j - size;
+	int num_size = Num - size * 2;
+
+	if (x_index == 0) { realnum = y_index + 1; }
+	else if (y_index == num_size-1) { realnum = x_index + y_index + 1; }
+	else if (x_index == num_size - 1) { realnum = 3 * num_size - 2 - y_index; }
+	else if (y_index == 0) { realnum = 4 * num_size - 3 - x_index; }
+
+	return realnum;
+}
+
+int main() {
+	int Num;
+	int size = 0;
+	cin >> Num;
+
+	vector<int>a(Num);
+	a[0] = 0;
+	for (int i = 1; i <= Num / 2-1; i++)
+	{
+		a[i] = 4 * (Num - 1-2*(i-1))+a[i-1];
+	}
+
+	for (int i = 0; i < Num; i++) {
+		cout << endl;
+		for (int j = 0; j < Num; j++) {
+			int ans = maxnum(Num, i, j);
+			int size = num_size(Num, i, j);
+			cout <<setw(4)<<setfill(' ')<< ans+a[size]<< " ";
+		}
+	}
+
+	return 0;
+}
+
+选做题11 找出n以内所有素数
+思路：找到素数判别方法 遍历即可
+      判别方法：任取一个数n 对2-sqrt(n)进行遍历 判断n对他们的余数是否为0  若存在为0 则不是素数
+                                             反之则为素数 
+					     原因是一个数若不是素数 必然是两数乘积 那么一定有一个因子在1-sqrt(n)之间
+		
+bool is_prime(int num)
+{
+	bool flag=true;
+	int longth = int(sqrt(num));
+	for (int i = 2; i < longth+1; i++)
+	{
+		if (num%i == 0)
+		{
+			flag = false;
+			break;
+		}
+	}
+	return flag;
+}
+int main()
+{
+	int num;
+	cin >> num;
+	for (; num > 1; num--)
+	{
+		if(is_prime(num))
+		{
+			cout << num << endl;
+		}
+	}
+	return 0;
+}
+
+
+
