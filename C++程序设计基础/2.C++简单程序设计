@@ -195,5 +195,250 @@ int main()
 	return 0;
 }
 
+选做题13 最长等值序列
+思路：维护一个向量 若plst[i] == plst[i - 1]则记为0
+      问题转化为求最长0序列 
+      可以维护一个最长值 当前值 当前值遇到0就+1 遇到不是0 就归0
+      最大值+1就是最长等值序列
+int main()
+{
+	int len;
+	cin >> len;
+	vector<int>plst(len);
+
+	int maxlen = 0;
+	int nowlen = 0;
+
+	vector<int>qlst(len);
+	qlst[0] = 1;
+	for (int i = 0; i < len; i++)
+	{
+		cin >> plst[i];
+	}
+
+	for (int i = 1; i < len; i++) {
+		if (plst[i] == plst[i - 1]) { qlst[i] = 0; }
+		else { qlst[i] = 1; }
+		}
+
+	for (int i = 1; i < len; i++) {
+		if (qlst[i] == 0) { 
+			nowlen += 1;
+			maxlen = maxlen > nowlen ? maxlen : nowlen;
+		}
+		else { nowlen = 0; }
+
+	}
+	if (maxlen == 0) {
+		cout << "no ans";
+	}
+	else {
+		cout << maxlen + 1;
+	}
+	return 0;
+}
+
+选做题：蜗牛爬行问题
+        在长度为L厘米的树枝上，共有n支蜗牛，每只蜗牛的初始位置均为整数，且不重合，速度大小为1cm/s，速度方向为向左或向右；
+	当两只蜗牛正面相遇时，两者都改变方向，变为背向而行。
+	现在，我们知道了每只蜗牛的初始位置，但是不知道他们的速度方向，问所有蜗牛掉下树枝的最短时间与最长时间。
+	
+思路：用程序将过程描述下来 创建蜗牛对象 成员有：位置 方向 是否变向 是否出界
+     对所有蜗牛进行初始化后  每次循环先判断是否有蜗牛需要变向 然后根据方向改变蜗牛位置 最后判断是否所有蜗牛出界
+     最长的时间方案是所有蜗牛相对爬行  最快时间是全都背向爬行 
+     
+class snail {
+public:int position, direction,is_out;
+	   bool is_change;
+
+	   void set_snail(int dir)
+	   {
+		   direction = dir;
+		   is_out = 1;
+		   is_change = false;
+	   }
+
+	   void change_is(snail other)
+	   {
+		   if ((abs(position - other.position) == 1) && (direction != other.direction))
+		   {
+			   is_change = true;
+		   }
+	   }
+
+	   void change_dir()
+	   {
+		   if (is_change)
+		   {
+			   direction = (direction == 1) ? -1 : 1;
+		   }
+	   }
+
+	   void isout(int num)
+	   {
+		   if( (position >= num) || (position <= -1))
+		   {
+			   is_out = 0;
+		   }
+	   }
+
+};
 
 
+int main()
+{
+	int len=10;
+	int num=3;
+
+	int allflag1 = 1;
+	int allflag2 = 1;
+
+	vector<snail>long_position(num);
+	vector<snail>short_position(num);
+	int longtime = 0;
+	int shorttime = 0;
+
+	for (int i = 0; i < num; i++)
+	{
+		cin>>long_position[i].position;
+		short_position[i].position = long_position[i].position;
+	}
+
+
+	for (int i = 0; i < num; i++)
+	{
+		if (i < num / 2) { 
+			long_position[i].set_snail(1);
+			short_position[i].set_snail(-1);
+		}
+		else { long_position[i].set_snail(-1);
+		       short_position[i].set_snail(1);
+		}
+	}
+
+	while (allflag1!=0)
+	{
+		for (int i = 0; i < num-1; i++)
+		{
+			long_position[i].change_is(long_position[i + 1]);
+		}
+		long_position[num - 1].change_is(long_position[num - 2]);
+
+		for (int i = 0; i < num; i++)
+		{
+			long_position[i].change_dir();
+			long_position[i].position += long_position[i].direction;
+			long_position[i].isout(len);
+		}
+
+		allflag1 = long_position[0].is_out;
+
+		for (int i = 1; i < num; i++)
+		{
+			allflag1 += long_position[i].is_out;
+		}
+
+		longtime += 1;
+	}
+
+	cout << longtime<<endl;
+
+	while (allflag2 != 0)
+	{
+		for (int i = 0; i < num-1; i++)
+		{
+			short_position[i].change_is(short_position[i + 1]);
+		}
+		short_position[num - 1].change_is(short_position[num - 2]);
+
+		for (int i = 0; i < num; i++)
+		{
+			short_position[i].change_dir();
+			short_position[i].position += short_position[i].direction;
+			short_position[i].isout(len);
+		}
+
+		allflag2 = short_position[0].is_out;
+
+		for (int i = 1; i < num; i++)
+		{
+			allflag2 += short_position[i].is_out;
+		}
+		shorttime += 1;
+
+	}
+	cout << shorttime << endl;
+	return 0;
+}
+
+选做题：出现最多的数字
+        题目描述
+	给定一串已经从小到大排好顺序的数字，其中有些数字出现了多次，请输出出现次数最多的那个数字。
+	如果有两个数字出现的次数一样，那么其中较小的那个。
+思路：维护一个数组 记录每个数字出现的次数
+     找到最多的 记录此时的下标
+
+int main()
+{
+	int num;
+	cin >> num;
+	vector<int>plist(num);
+	int max = 0;
+	int flag = 0;
+
+	for (int i = 0; i < num; i++)
+	{
+		cin >> plist[i];
+	}
+
+	vector<int>ansnum(plist[-1]+1);
+
+	for (int i = 0; i < num; i++)
+	{
+		ansnum[plist[i]] += 1;
+	}
+
+	for (int i = 0; i < plist[-1]+1; i++)
+	{
+		if (max < ansnum[i])
+		{
+			max = ansnum[i];
+			flag = i;
+		}
+	}
+	cout << max << endl;
+	cout << flag << endl;
+	return 0;
+}
+
+选做题：找出100内完美数
+思路：类似于找素数的方法 
+
+bool is_perfect(int num)
+{
+	int factor = 0;
+	int total_factor = 1;
+	factor = (int)sqrt(num);
+	for (int i = 2; i <= factor; i++)
+	{
+		if (num%i == 0)
+		{
+			total_factor += i + (num / i);
+		}
+	}
+	return num == total_factor;
+}
+
+int main()
+{
+	int num;
+	cin >> num;
+
+	for (int i = 3; i < num; i++)
+	{
+		if (is_perfect(i))
+		{
+			cout << i << endl;
+		}
+	}
+}
