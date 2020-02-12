@@ -11,3 +11,196 @@
 constexpr函数 常量-->常量
 
 带默认形参值的函数 不能重复定义  可以用注释写出来 用以提醒
+
+注意！ 反复阅读 函数调用的深度探索部分
+
+
+
+习题：判断是否为直角三角形
+      输入一个三角形的3边长度，判断该三角形是否为直角三角形，若是则输出True，若不是则输出False。推荐做法：定义一个函数，接受三个int参数，返回bool，再用主函数调用之
+
+思路：编写函数 对输入三个数字排序 然后判断是否满足平方和相等
+问题：不定行做输入时的输入流写法 使用string和堆栈来处理
+
+bool is_triangle(int a, int b, int c)
+{
+	vector<int>triangle_list(3);
+	triangle_list[0] = a;
+	triangle_list[1] = b;
+	triangle_list[2] = c;
+	sort(triangle_list.begin(), triangle_list.end());
+
+	bool istriangle = triangle_list[0] + triangle_list[1]>triangle_list[2];
+	return ((triangle_list[0]* triangle_list[0]+ triangle_list[1]* triangle_list[1]) ==triangle_list[2]*triangle_list[2])&&istriangle;
+}
+int main()
+{
+	vector<int> vec;
+	vector<vector<int>> vec_all;
+	string lineData;
+	int order = 0;
+
+	while (getline(cin, lineData))
+	{
+		while (!lineData.empty())
+		{
+			auto loc = find(lineData.begin(), lineData.end(), ' ');
+			order = distance(lineData.begin(), loc);
+
+			vec.push_back(stoi(lineData.substr(0, order)));
+			lineData.erase(0, 1 + order);
+		}
+		vec_all.push_back(vec);
+		vec.erase(vec.begin(), vec.end());
+	}
+
+	for (int i = 0; i < vec_all.size(); ++i)
+	{
+		cout << vec_all[i][0] << " " << vec_all[i][1] << " " << vec_all[i][2] << endl;
+		cout << is_triangle((int)vec_all[i][0], (int)vec_all[i][1],(int)vec_all[i][2]) << endl;
+	}
+	cout << is_triangle(1, 1, 1);
+	return 0;
+}
+
+
+习题：判断是否为丑数
+思路：使用递归的方法  设置返回点  2 3 5
+
+bool is_ugly(int num)
+{
+	if (num == 2 || num == 3 || num == 5)
+		return true;
+
+	int a = num % 2;
+	int b = num % 3;
+	int c = num % 5;
+
+	
+	if(a==0)
+	{
+		return is_ugly(num / 2);
+	}
+	else if (b == 0) {
+		return is_ugly(num / 3);
+	}
+	else if (c == 0)
+	{
+		return is_ugly(num / 5);
+	}
+	else return 0;
+}
+
+选做题：上楼梯方法数 一次1/2层
+思路：简单的递归可以实现
+int step_all(int num)
+{
+	if (num == 1)
+	{
+		return 1;
+	}
+	else if (num == 2)
+	{
+		return 2;
+	}
+	else {
+		return step_all(num - 1) + step_all(num - 2);
+	}
+}
+
+选做题：开灯关灯
+        有n盏灯，编号依次为1,2,3,...,n；初始化时，所有灯都是关闭状态；
+        小明第一次将编号为1,2,3,...,共n盏灯都打开了；
+        第二次将编号为2,4,6,....,共n/2盏灯都关闭了；
+        第三次将编号为3,6,9,...,共n/3盏灯进行操作，若是之前关闭状态则打开，若是打开状态，则关闭；
+        第四次将4,8,12,....,共n/4盏灯进行操作。这样操作了n次，问最后亮了几盏灯
+思路：编写状态转换函数  依次调用即可
+
+void turn_light(vector<int>&a,int num)
+{
+	for (int i = 0; i < a.size(); i++)
+	{
+		if ((i+1)%num == 0)
+		{
+			a[i] = a[i] == 0 ? 1 : 0;
+		}
+	}
+
+}
+
+int main()
+{
+	int len;
+	cin >> len;
+	vector<int> light(len);
+	int all_light = 0;
+	for (int i = 0; i < len; i++)
+	{
+		light[i] = 0;
+	}
+
+	for (int i = 1; i < len + 1; i++)
+	{
+		turn_light(light, i);
+	}
+
+	for (int i = 0; i < len; i++)
+	{
+		if (light[i] == 1)
+		{
+			all_light += 1;
+		}
+	}
+
+	cout << all_light << endl;
+
+	return 0;
+}
+
+选做题：大数相加
+思路：将数字视为字符串 运用加减法则来进行 
+      注意输入时的顺序
+      ？ while(cin>>a>>b)什么意思
+
+string big_plus(string num1, string num2) {
+	if (num1.size()<num2.size()) {//把num1固定为位数较大的那个数，方便后面处理
+		string temp = num1;
+		num1 = num2;
+		num2 = temp;
+	}
+	int length1 = num1.size(), length2 = num2.size(), flag = 0, a, b, sum;//flag是进位标记
+	while (length1>0) {//从低位开始把对应的位相加
+		a = num1[length1 - 1] - '0';//获取num1当前位的数字
+		if (length2>0)//如果num2还没加完（注意，num2是位数较少的）
+			b = num2[length2 - 1] - '0';//获取num2当前位的数字
+		else
+			b = 0;			
+		sum = a + b + flag;//num1与num2对应位上的数字相加，再加上进位位
+		if (sum >= 10) {//如果加起来大于于10，那就需要进位了
+			num1[length1 - 1] = '0' + sum % 10;//计算加完之后，当前位应该是多少
+			flag = 1;//把进位标记置1
+		}
+		else {
+			num1[length1 - 1] = '0' + sum;//计算加完之后，当前位应该是多少
+			flag = 0;//把进位标记置0
+		}
+		length1--;//向高位移动1位
+		length2--;//向高位移动1位
+	}
+
+	if (1 == flag)
+		num1 = "1" + num1;
+	return num1;
+}
+
+int main()
+{
+	string num1;
+	string num2;
+	cin >> num1 >> num2;
+	cout << "num1:" << num1 << endl;
+	cout << "num2:" << num2 << endl;
+	cout << "sum:" << big_plus(num1, num2) << endl;
+	
+	return 0;
+}
